@@ -1,7 +1,4 @@
-
-
-
-class register:
+class Register:
     def __init__(self, tamanho):
         self.r = [0 for c in range(tamanho)]
 
@@ -10,6 +7,9 @@ class register:
         a = [bit]
         a.extend(self.r)
         self.r = a[:]
+
+    def resetRegister(self):
+        self.r = [0]*len(self.r)
 
     def setRegister(self, registerValue):
         self.r = registerValue[:]

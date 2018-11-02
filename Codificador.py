@@ -1,6 +1,7 @@
-import register
+import Register
 import geraVetor
-class codificador:
+
+class Codificador:
     def __init__(self,m,g1,g2,g3):
         self.m = m
         self.g1 = g1
@@ -11,7 +12,7 @@ class codificador:
         self.g2pol = self.octal2poly(g2)
         self.g3pol = self.octal2poly(g3)
 
-        self.register = register.register(m)
+        self.register = Register.Register(m)
 
     def octal2poly(self, g):
         a = []
@@ -46,7 +47,19 @@ class codificador:
         d = d[-(self.m+1):]
         return d[:]
 
-    def codifica(self, bitInformacao):
+    def codifica(self, bitInformacao): # codificador teste
+        v1 = bitInformacao
+        
+        v2 = bitInformacao + self.register.r[0] + self.register.r[1] + self.register.r[1]
+        v2 %= 2
+
+        v3 = bitInformacao + self.register.r[0] + self.register.r[1] + self.register.r[0]
+        v3 %= 2
+
+        self.register.add((self.register.r[0]+self.register.r[1]+bitInformacao)%2)
+        return [v1,v2,v3] 
+
+    def codifica2(self, bitInformacao): # codificador correto
         v1 = bitInformacao
         for i in range(self.m):
             v1 += self.g1pol[i]*self.register.r[i]
@@ -63,42 +76,4 @@ class codificador:
         v3 %= 2
 
         self.register.add(bitInformacao)
-        # print(self.register.r)
-        # print(v1,v2,v3)
         return [v1,v2,v3]
-
-class diagrama:
-    def __init__(self,m, g1,g2,g3):
-        self.encod = codificador(m, g1, g2, g3)
-        self.estados = geraVetor.geraVetor(m)
-        # self.grafo = []
-        self.grafo = {}
-        self.montaDiagrama()
-        
-    def list2bin(self, lista):
-        num = 0
-        for i in range(-1,-len(lista)-1,-1):
-            num += lista[i]*2**(-i-1)
-        return num
-
-    def montaDiagrama(self):
-        for estado in self.estados:
-            self.encod.register.setRegister(estado)
-            codigo = self.encod.codifica(0)
-            destino = self.encod.register.r 
-
-            self.grafo[self.list2bin(estado)] = {}
-            self.grafo[self.list2bin(estado)][0] = [estado[:],destino[:],0,codigo[:]]
-            
-            self.encod.register.setRegister(estado)
-            codigo = self.encod.codifica(1)
-            destino = self.encod.register.r 
-            self.grafo[self.list2bin(estado)][1] = [estado[:],destino[:],1,codigo[:]]
-
-        for i in self.grafo.keys():
-            print(self.grafo[i][0])
-            print(self.grafo[i][1])
-
-if __name__ == '__main__':
-    cod = codificador(3, 13, 15, 17)
-    diagra = diagrama(3, 13, 15, 17)
