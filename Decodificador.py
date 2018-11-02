@@ -9,7 +9,6 @@ class Decodificador:
         self.qtdEstados = 2**codificador.m
         self.qtdMemorias = codificador.m
         self.diagrama = Diagrama.Diagrama(codificador)
-
         self.k = 0
         self.trelica = self.__iniciaTrelica()
         self.qtdEstadosAtingidos = 0
@@ -40,12 +39,17 @@ class Decodificador:
         if len(self.trelica) == 0:
             print("Eh necessario adicionar subsequencias antes: Ex.: adicionaSequencia([0,1,0])")
             return
+
         listaDecodificada = []
         estadoAtual = self.__extraiEstadoMenorCusto()
         for estados in self.trelica[:0:-1]:
             listaDecodificada.append(estados.vetor[estadoAtual][2])
             estadoAtual = estados.vetor[estadoAtual][3]
-        return listaDecodificada[:]
+        listaDecodificada[:].reverse()
+
+        self.trelica = self.__iniciaTrelica()
+
+        return listaDecodificada
 
     def __extraiEstadoMenorCusto(self):
         vetor = self.trelica[-1].vetor 

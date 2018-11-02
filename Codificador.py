@@ -47,19 +47,7 @@ class Codificador:
         d = d[-(self.m+1):]
         return d[:]
 
-    def codifica(self, bitInformacao): # codificador teste
-        v1 = bitInformacao
-        
-        v2 = bitInformacao + self.register.r[0] + self.register.r[1] + self.register.r[1]
-        v2 %= 2
-
-        v3 = bitInformacao + self.register.r[0] + self.register.r[1] + self.register.r[0]
-        v3 %= 2
-
-        self.register.add((self.register.r[0]+self.register.r[1]+bitInformacao)%2)
-        return [v1,v2,v3] 
-
-    def codifica2(self, bitInformacao): # codificador correto
+    def codifica(self, bitInformacao): # codificador correto
         v1 = bitInformacao
         for i in range(self.m):
             v1 += self.g1pol[i]*self.register.r[i]
@@ -77,3 +65,18 @@ class Codificador:
 
         self.register.add(bitInformacao)
         return [v1,v2,v3]
+
+    def resetCodificador(self):
+        self.register.resetRegister()
+    
+    def codifica2(self, bitInformacao): # codificador teste
+        v1 = bitInformacao
+        
+        v2 = bitInformacao + self.register.r[0] + self.register.r[1] + self.register.r[1]
+        v2 %= 2
+
+        v3 = bitInformacao + self.register.r[0] + self.register.r[1] + self.register.r[0]
+        v3 %= 2
+
+        self.register.add((self.register.r[0]+self.register.r[1]+bitInformacao)%2)
+        return [v1,v2,v3] 
