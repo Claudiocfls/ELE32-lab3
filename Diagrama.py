@@ -26,6 +26,10 @@ class Diagrama:
             # self.grafo[self.list2bin(estado)][1] = [estado[:],destino[:],1,codigo[:]]
             self.grafo[self.list2bin(estado)][1] = [self.list2bin(destino[:]), codigo[:]]
         self.encod.register.resetRegister()
+
+        # for i in self.grafo.keys():
+        #     print(i,0,self.grafo[i][0])
+        #     print(i,1,self.grafo[i][1])
         
     def getTransicao(self, estadoAtual, bit):
         return self.grafo[estadoAtual][bit]

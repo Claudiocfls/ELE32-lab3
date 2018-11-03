@@ -3,7 +3,7 @@ import geraVetor
 
 class Codificador:
     def __init__(self,m,g1,g2,g3):
-        self.m = m
+        self.m = 2
         self.g1 = g1
         self.g2 = g2
         self.g3 = g3
