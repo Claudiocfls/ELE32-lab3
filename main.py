@@ -2,6 +2,7 @@ import Codificador
 import Diagrama
 import Decodificador
 import CanalBSC
+import CanalAWGN
 import DadosGrafico
 import Grafico
 import random
@@ -40,14 +41,16 @@ def sorteiaBit():
 def adicionaReferencia(vetorP, grafico):
     dados = DadosGrafico.DadosGrafico()
     dados.defineLegend("sem codificacao")
+    dados.adicionaRate(1.0)
     for p in vetorP:
         dados.adicionaPonto(p, p)
-    dados.salvarEmArquivo('semcodificacao.txt')
+    dados.salvarEmArquivo('Dados\\semcodificacao.txt')
     grafico.adicionaDados(dados,'bs:')
 
 if __name__ == '__main__':
 
     canal = CanalBSC.CanalBSC(0.0)
+    canal_gaussiano = CanalAWGN.CanalAWGN(1)
     vetorP = defineVetorDeP()
 
     qtdBitsEnviados = int(1e4)
@@ -67,6 +70,7 @@ if __name__ == '__main__':
         decodificador = Decodificador.Decodificador(codificador)
         dados = DadosGrafico.DadosGrafico()
         dados.defineLegend(converteParaString(param))
+        dados.adicionaRate(1.0/3.0)
 
         print(param)
         for p in vetorP:
@@ -98,14 +102,14 @@ if __name__ == '__main__':
             print(p,"    ",contTotal/qtdBitsEnviados," ",contTotal)
             dados.adicionaPonto(x = p, y = contTotal/qtdBitsEnviados)
 
-        dados.salvarEmArquivo(converteParaString(param)+'.txt') # salva os dados em um arquio
+        dados.salvarEmArquivo('Dados\\'+converteParaString(param)+'.txt') # salva os dados em um arquio
         grafico.adicionaDados(dados, styles[ind]) # adiciona os dados para plotar depois
         ind += 1
 
     adicionaReferencia(vetorP, grafico)
 
     dados = DadosGrafico.DadosGrafico()
-    dados.dadosDeArquivo("hamming.txt")
+    dados.dadosDeArquivo("Dados\\hamming.txt")
 
     grafico.adicionaDados(dados, styles[0])
 

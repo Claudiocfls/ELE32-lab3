@@ -11,12 +11,14 @@ class Grafico:
         grafico = {}
         grafico['x'] = dadosGrafico.x
         grafico['y'] = dadosGrafico.y
+        grafico['rate'] = dadosGrafico.rate
         grafico['legend'] = dadosGrafico.legend
         grafico['style'] = styles
         self.dados[self.index] = copy.deepcopy(grafico)
         self.index += 1
 
     def mostraGrafico(self):
+        plt.figure(1)
         for i in range(self.index):
             dadosTemp = self.dados[i]
             x = [c for c in dadosTemp['x']]
@@ -35,7 +37,7 @@ class Grafico:
         plt.ylabel("Probabilidade de erro de bit")
 
         plt.savefig("grafico_linear.png")
-        plt.show()
+        plt.figure(2)
 
         # outro grafico
         for i in range(self.index):
@@ -56,4 +58,25 @@ class Grafico:
         plt.ylabel("log(Probabilidade de erro de bit)")
         
         plt.savefig("grafico_log.png")
+        plt.figure(3)
+
+        # Grafico Convertido
+        for i in range(self.index):
+            dadosTemp = self.dados[i]
+            x = [10*math.log10(-math.log(2*dadosTemp['x'][c])/dadosTemp['rate']) for c in range(len(dadosTemp['x'])) if dadosTemp['y'][c] != 0 and dadosTemp['x'][c] != 0.5]
+            y = [math.log10(dadosTemp['y'][c]) for c in range(len(dadosTemp['y'])) if dadosTemp['y'][c] != 0 and dadosTemp['x'][c] != 0.5]
+            # y = [c for c in dadosTemp['y']]
+            plt.plot(x, y, label=dadosTemp['legend'])
+            # plt.plot(x,y, dadosTemp['style'], label=dadosTemp['legend'])
+        plt.legend()
+        # plt.xscale('log')
+        # plt.yscale('log')
+        # left, right = plt.xlim()
+        # plt.xlim(right, left)
+        plt.title("Desempenho dos códigos")
+        # plt.yscale('log', basey=10)
+        plt.xlabel("Ei/N0")
+        plt.ylabel("log(Probabilidade de erro de bit)")
+
+        plt.savefig("grafico_convertido.png")
         plt.show()

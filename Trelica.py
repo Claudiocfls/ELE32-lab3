@@ -1,6 +1,7 @@
 import Diagrama
 import copy
 import VetorDeEstados
+import math
 
 class Trelica:
     def __init__(self, codificador):
@@ -75,3 +76,18 @@ class Trelica:
             if a[i] != b[i]:
                 distancia += 1
         return distancia
+
+    def __probabilidadeExata(self, a, b, p):
+        probabilidade = 1
+        for i in range(len(a)):
+            if a[i] != b[i]:
+                probabilidade = probabilidade*p
+            else:
+                probabilidade = probabilidade*(1-p)
+        return (1-probabilidade)
+
+    def __distanciaEuclidiana(self, a, b):
+        distanciaQuadrada = 0
+        for i in range(len(a)):
+            distanciaQuadrada = distanciaQuadrada + (a[i]-b[i])**2
+        return math.sqrt(distanciaQuadrada)
