@@ -5,17 +5,19 @@ class DadosGrafico:
         self.legend = "Sem legenda"
         self.x = []
         self.y = []
-        self.rate = []
+        self.N = None 
+        self.K = None
 
     def defineLegend(self, legend):
         self.legend = legend
 
+    def defineTaxa(self,K,N):
+        self.K = K
+        self.N = N
+
     def adicionaPonto(self, x, y):
         self.x.append(x)
         self.y.append(y)
-
-    def adicionaRate(self, rate):
-        self.rate = rate
 
     def dadosDeArquivo(self, nomeArquivo):
         arquivo = open(nomeArquivo, 'r')
@@ -25,14 +27,16 @@ class DadosGrafico:
         self.legend = conteudo['legend']
         self.x = conteudo['x']
         self.y = conteudo['y']
-        self.rate = conteudo['rate']
+        self.N = conteudo['N']
+        self.K = conteudo['K']
 
     def salvarEmArquivo(self, nomeArquivo):
         conteudo = {
             "legend": self.legend,
             "x": self.x,
             "y": self.y,
-            "rate": self.rate
+            "N": self.N,
+            "K": self.K
         }
         with open(nomeArquivo, 'w') as outfile:
             json.dump(conteudo, outfile)

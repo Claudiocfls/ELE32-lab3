@@ -11,7 +11,8 @@ class Grafico:
         grafico = {}
         grafico['x'] = dadosGrafico.x
         grafico['y'] = dadosGrafico.y
-        grafico['rate'] = dadosGrafico.rate
+        grafico['N'] = dadosGrafico.N
+        grafico['K'] = dadosGrafico.K
         grafico['legend'] = dadosGrafico.legend
         grafico['style'] = styles
         self.dados[self.index] = copy.deepcopy(grafico)
@@ -19,64 +20,72 @@ class Grafico:
 
     def mostraGrafico(self):
         plt.figure(1)
+        # Grafico linear
         for i in range(self.index):
             dadosTemp = self.dados[i]
             x = [c for c in dadosTemp['x']]
-            # y = [math.log10(c) for c in dadosTemp['y']]
             y = [c for c in dadosTemp['y']]
-            plt.plot(x,y,label=dadosTemp['legend'])
-            # plt.plot(x,y, dadosTemp['style'], label=dadosTemp['legend'])
+            plt.plot(x,y, dadosTemp['style'], label=dadosTemp['legend'])
         plt.legend()
-        # plt.xscale('log')
-        # plt.yscale('log')
         left,right = plt.xlim()
         plt.xlim(right,left)
         plt.title("Desempenho dos códigos")
-        # plt.yscale('log', basey=10)
         plt.xlabel("p")
         plt.ylabel("Probabilidade de erro de bit")
+        plt.savefig("Graficos/grafico_linear.png")
 
-        plt.savefig("grafico_linear.png")
+
         plt.figure(2)
-
-        # outro grafico
+        # Grafico log log
         for i in range(self.index):
             dadosTemp = self.dados[i]
             x = [math.log10(dadosTemp['x'][c]) for c in range(len(dadosTemp['x'])) if dadosTemp['y'][c] != 0]
             y = [math.log10(dadosTemp['y'][c]) for c in range(len(dadosTemp['y'])) if dadosTemp['y'][c] != 0]
-            # y = [c for c in dadosTemp['y']]
-            plt.plot(x,y,label=dadosTemp['legend'])
-            # plt.plot(x,y, dadosTemp['style'], label=dadosTemp['legend'])
+            plt.plot(x,y, dadosTemp['style'], label=dadosTemp['legend'])
         plt.legend()
         # plt.xscale('log')
         # plt.yscale('log')
         left,right = plt.xlim()
         plt.xlim(right,left)
         plt.title("Desempenho dos códigos")
-        # plt.yscale('log', basey=10)
-        plt.xlabel("log(p)")
-        plt.ylabel("log(Probabilidade de erro de bit)")
-        
-        plt.savefig("grafico_log.png")
-        plt.figure(3)
+        plt.xlabel("log10(p)")
+        plt.ylabel("log10(Probabilidade de erro de bit)")
+        plt.savefig("Graficos/grafico_log.png")
 
-        # Grafico Convertido
+
+        plt.figure(3)
+        # Grafico Ei/N0
         for i in range(self.index):
             dadosTemp = self.dados[i]
-            x = [10*math.log10(-math.log(2*dadosTemp['x'][c])/dadosTemp['rate']) for c in range(len(dadosTemp['x'])) if dadosTemp['y'][c] != 0 and dadosTemp['x'][c] != 0.5]
-            y = [math.log10(dadosTemp['y'][c]) for c in range(len(dadosTemp['y'])) if dadosTemp['y'][c] != 0 and dadosTemp['x'][c] != 0.5]
-            # y = [c for c in dadosTemp['y']]
-            plt.plot(x, y, label=dadosTemp['legend'])
-            # plt.plot(x,y, dadosTemp['style'], label=dadosTemp['legend'])
+            rate = dadosTemp['K']/dadosTemp['N']
+            x = [10*math.log10(-math.log(2*dadosTemp['x'][c])/rate) for c in range(2,len(dadosTemp['x'])) if dadosTemp['y'][c] != 0]
+            y = [math.log10(dadosTemp['y'][c]) for c in range(2,len(dadosTemp['y'])) if dadosTemp['y'][c] != 0]
+            plt.plot(x,y, ".-",label=dadosTemp['legend'])
         plt.legend()
-        # plt.xscale('log')
-        # plt.yscale('log')
-        # left, right = plt.xlim()
-        # plt.xlim(right, left)
+        plt.grid()
         plt.title("Desempenho dos códigos")
-        # plt.yscale('log', basey=10)
-        plt.xlabel("Ei/N0")
-        plt.ylabel("log(Probabilidade de erro de bit)")
+        plt.xlabel("Ei/N0(dB)")
+        plt.ylabel("log10(Probabilidade de erro de bit)")
+        plt.savefig("Graficos/grafico_EiN0.png")
 
-        plt.savefig("grafico_convertido.png")
+
+        ps = []
+        for i in [10,100,1000,10000]:
+            for j in [5,4,3,2,1]:
+                ps.append(j/i)
+        ps = ps[1:]
+        plt.figure(4)
+        # Grafico Ei/N0
+        rate = 1
+        y = [math.log10(c) for c in ps]
+        x = [10*math.log10(-math.log(2*c)/rate) for c in ps]
+        plt.plot(x,y)
+        
+        plt.legend()
+        plt.grid()
+        plt.title("Desempenho dos códigos")
+        plt.xlabel("Ei/N0(dB)")
+        plt.ylabel("log(p)")
+
+
         plt.show()

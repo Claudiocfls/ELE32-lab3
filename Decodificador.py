@@ -6,9 +6,12 @@ import VetorDeEstados
 import Trelica
 
 class Decodificador:
-    def __init__(self, codificador):
+    # param: mode -> indica qual modo usar para realizar a decodificacao: euclidiano, pexata, hamming
+    def __init__(self, codificador, mode, p=None):
         self.codificador = codificador
-        self.trelica = Trelica.Trelica(codificador)
+        self.mode = mode 
+        self.p = p
+        self.trelica = Trelica.Trelica(codificador, mode, p)
 
     def adicionaSubSequencia(self, subsequencia):
         self.trelica.adicionaSubSequencia(subsequencia)

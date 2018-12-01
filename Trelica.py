@@ -4,11 +4,13 @@ import VetorDeEstados
 import math
 
 class Trelica:
-    def __init__(self, codificador):
+    def __init__(self, codificador, modo, p=None):
         self.qtdEstados = 2**codificador.m
         self.diagrama = Diagrama.Diagrama(codificador)
         self.trelica = self.__iniciaTrelica()
         self.qtdEstadosAtingidos = 0
+        self.modo = modo
+        self.p = p
 
     def adicionaSubSequencia(self, subSequenciaCodigo):
         vetorAnterior = self.trelica[-1]
@@ -19,7 +21,7 @@ class Trelica:
                 transicao = self.diagrama.getTransicao(estadoAnterior[-1], bit)
                 destino = transicao[0]
                 custoAnterior = estadoAnterior[1]
-                custoDaTransicao = self.__distanciaHamming(subSequenciaCodigo, transicao[1])
+                custoDaTransicao = self.__defineCusto(subSequenciaCodigo, transicao[1])
                 self.__updateNovoVetor(novoVetor, estadoAnterior[-1], destino, custoDaTransicao, bit, custoAnterior)
         self.trelica.append(copy.deepcopy(novoVetor))
     
@@ -69,6 +71,18 @@ class Trelica:
                 lista.append(estado)
         self.qtdEstadosAtingidos = len(lista)
         return lista
+
+    def __defineCusto(self, a, b):
+        if self.modo == 'hamming':
+            return self.__distanciaHamming(a, b)
+        if self.modo == 'pexata':
+            if self.p == None:
+                print("NECESSARIO DEFINIR UM VALOR DE PROBABILIDAE DE ERRO PARA O CANAL!")
+                return
+            return self.__probabilidadeExata(a, b, self.p)
+        if self.modo == 'euclidiano':
+            return self.__distanciaEuclidiana(a, b)
+        print("MODO INCORRETO!")
 
     def __distanciaHamming(self, a, b):
         distancia = 0

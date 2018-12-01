@@ -1,27 +1,33 @@
 import DadosGrafico
 import Grafico
+import os
+
 
 grafico = Grafico.Grafico()
 
-dados1 = DadosGrafico.DadosGrafico()
-dados1.dadosDeArquivo("hamming.txt")
-grafico.adicionaDados(dados1, "ro" )
+# arquivos = os.listdir("Dados/ciclico")
+# for arquivo in arquivos:
+#     dado = DadosGrafico.DadosGrafico()
+#     dado.dadosDeArquivo("Dados/ciclico/"+arquivo)
+#     grafico.adicionaDados(dado, "")
 
-dados1 = DadosGrafico.DadosGrafico()
-dados1.dadosDeArquivo("3, 13, 15, 17.txt")
-grafico.adicionaDados(dados1, "ro" )
+arquivos = os.listdir("Dados/linear")
+for arquivo in arquivos:
+    dado = DadosGrafico.DadosGrafico()
+    dado.dadosDeArquivo("Dados/linear/"+arquivo)
+    grafico.adicionaDados(dado, "")
 
-dados1 = DadosGrafico.DadosGrafico()
-dados1.dadosDeArquivo("4, 25, 33, 37.txt")
-grafico.adicionaDados(dados1, "ro" )
+arquivos = os.listdir("Dados/convolucional")
+for arquivo in arquivos:
+    dado = DadosGrafico.DadosGrafico()
+    dado.dadosDeArquivo("Dados/convolucional/"+arquivo)
+    grafico.adicionaDados(dado, "")
 
-dados1 = DadosGrafico.DadosGrafico()
-dados1.dadosDeArquivo("6, 117, 127, 155.txt")
-grafico.adicionaDados(dados1, "ro" )
 
-dados1 = DadosGrafico.DadosGrafico()
-dados1.dadosDeArquivo("semcodificacao.txt")
-grafico.adicionaDados(dados1, "ro" )
+# referencia
+dado = DadosGrafico.DadosGrafico()
+dado.dadosDeArquivo("Dados/semcodificacao.txt")
+grafico.adicionaDados(dado, ".k:")
 
 grafico.mostraGrafico()
 

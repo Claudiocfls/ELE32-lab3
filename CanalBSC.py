@@ -28,4 +28,5 @@ class CanalBSC():
             else:
                 output.append(bloco[i])
 
-        return output,erros
+        # return output,erros
+        return output
