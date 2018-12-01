@@ -58,8 +58,8 @@ class Grafico:
         for i in range(self.index):
             dadosTemp = self.dados[i]
             rate = dadosTemp['K']/dadosTemp['N']
-            x = [10*math.log10(-math.log(2*dadosTemp['x'][c])/rate) for c in range(1,len(dadosTemp['x'])) if dadosTemp['y'][c] != 0]
-            y = [math.log10(dadosTemp['y'][c]) for c in range(1,len(dadosTemp['y'])) if dadosTemp['y'][c] != 0]
+            x = [10*math.log10(-math.log(2*dadosTemp['x'][c])/rate) for c in range(1,len(dadosTemp['x'])) if dadosTemp['y'][c] != 0 and dadosTemp['x'][c]<0.4]
+            y = [math.log10(dadosTemp['y'][c]) for c in range(1,len(dadosTemp['y'])) if dadosTemp['y'][c] != 0 and dadosTemp['x'][c]<0.4]
             plt.plot(x,y, dadosTemp['style'],label=dadosTemp['legend'])
         plt.legend()
         plt.grid()
