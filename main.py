@@ -8,6 +8,7 @@ import Grafico
 import random
 import ModuladorBPSK
 import math
+import time
 
 def defineVetorDeP():
     p = []
@@ -77,7 +78,7 @@ if __name__ == '__main__':
         # itera sobre todos os valores de p possiveis
         for p in vetorP[1:]:
             # canal.alteraProbabilidadeDeErro(p)
-            canal_gaussiano.alteraVariancia(-1/math.log(2*p))
+            canal_gaussiano.alteraVariancia(-1/math.log(2*p)/2)
             codificador.resetCodificador() # reseta as memorias
             decodificador = Decodificador.Decodificador(codificador, mode='euclidiano')    
             totalDeErros = 0
@@ -89,7 +90,9 @@ if __name__ == '__main__':
             for i in range(qtdBitsEnviados):
                 bitParaEnviar = sorteiaBit()
                 enviado.append(bitParaEnviar)
+                
                 codificado = codificador.codifica(bitParaEnviar) # nesse caso so codifica o bit 0
+                
                 modulado = BPSK.modula(codificado)
                 recebido = canal_gaussiano.transmitir(modulado)
                 decodificador.adicionaSubSequencia(recebido)
