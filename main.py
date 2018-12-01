@@ -7,10 +7,11 @@ import DadosGrafico
 import Grafico
 import random
 import ModuladorBPSK
+import math
 
 def defineVetorDeP():
     p = []
-    for j in range(1,5):
+    for j in range(1,4):
         for i in [5,4.5,4,3.5,3,2.5,2,1.5,1]:
             n = i/(10**j)
             p.append(n)
@@ -51,6 +52,7 @@ def adicionaReferencia(vetorP, grafico):
 if __name__ == '__main__':
 
     canal = CanalBSC.CanalBSC(0.0)
+    canal_gaussiano = CanalAWGN.CanalAWGN(1)
     vetorP = defineVetorDeP()
     BPSK = ModuladorBPSK.ModuladorBPSK()
     grafico = Grafico.Grafico()
@@ -68,15 +70,16 @@ if __name__ == '__main__':
     for param in codigos:
         codificador = Codificador.Codificador(param[0], param[1], param[2], param[3])
         dados = DadosGrafico.DadosGrafico()
-        dados.defineLegend("conv_"+converteParaString(param))
+        dados.defineLegend("conv_"+converteParaString(param)+"_euclidiano")
         dados.defineTaxa(1, 3)
 
         print(param)
         # itera sobre todos os valores de p possiveis
-        for p in vetorP:
-            canal.alteraProbabilidadeDeErro(p)
+        for p in vetorP[1:]:
+            # canal.alteraProbabilidadeDeErro(p)
+            canal_gaussiano.alteraVariancia(-1/math.log(2*p))
             codificador.resetCodificador() # reseta as memorias
-            decodificador = Decodificador.Decodificador(codificador, mode='pexata', p=p)    
+            decodificador = Decodificador.Decodificador(codificador, mode='euclidiano')    
             totalDeErros = 0
             
             # esse loop decodifica cada subsequencia
@@ -88,7 +91,7 @@ if __name__ == '__main__':
                 enviado.append(bitParaEnviar)
                 codificado = codificador.codifica(bitParaEnviar) # nesse caso so codifica o bit 0
                 modulado = BPSK.modula(codificado)
-                recebido = canal.transmitir(codificado)
+                recebido = canal_gaussiano.transmitir(modulado)
                 decodificador.adicionaSubSequencia(recebido)
             decodificado = decodificador.decodificaSequencia()
 
@@ -100,5 +103,5 @@ if __name__ == '__main__':
 
             dados.adicionaPonto(x = p, y = contTotal/qtdBitsEnviados)
 
-        # dados.salvarEmArquivo('Dados/convolucional/conv_'+converteParaString(param)+'.txt') # salva os dados em um arquio
+        dados.salvarEmArquivo('Dados/convolucional/conv_'+converteParaString(param)+'_euclidiano.txt') # salva os dados em um arquio
         # grafico.adicionaDados(dados, _) # adiciona os dados para plotar depois
