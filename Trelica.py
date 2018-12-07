@@ -58,8 +58,12 @@ class Trelica:
         if valorAntigo[0] == False:
             novoValor = (True, custoAnterior+custoTransicao, bit, origem, destino)
         else:
-            if valorAntigo[1] > custoAnterior + custoTransicao:
-                novoValor = (True, custoAnterior+custoTransicao, bit, origem, destino)
+            if(self.modo != 'pexata'):
+                if valorAntigo[1] >= custoAnterior + custoTransicao:
+                    novoValor = (True, custoAnterior+custoTransicao, bit, origem, destino)
+            else:
+                if valorAntigo[1] >= custoAnterior + custoTransicao:
+                    novoValor = (True, custoAnterior+custoTransicao, bit, origem, destino)
         novoVetor.vetor[destino] = novoValor[:]
 
     def __getEstadosJaAtingidos(self, vetorAnterior):
@@ -95,13 +99,20 @@ class Trelica:
         probabilidade = 1
         for i in range(len(a)):
             if a[i] != b[i]:
-                probabilidade = probabilidade*p
+                probabilidade *= p
             else:
-                probabilidade = probabilidade*(1-p)
-        return (1-probabilidade)
+                probabilidade *= (1-p)
+        if probabilidade == 0:
+            return 1e6
+        return abs(math.log10(probabilidade))
 
     def __distanciaEuclidiana(self, a, b):
         distanciaQuadrada = 0
         for i in range(len(a)):
-            distanciaQuadrada = distanciaQuadrada + (a[i]-b[i])**2
+            if b[i] == 0:
+                c = -1
+                distanciaQuadrada = distanciaQuadrada + (a[i]-c)**2
+            else:
+                c = +1
+                distanciaQuadrada = distanciaQuadrada + (a[i]-c)**2
         return math.sqrt(distanciaQuadrada)

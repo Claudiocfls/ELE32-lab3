@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 class CanalAWGN():
 
@@ -11,7 +12,7 @@ class CanalAWGN():
     def transmitir(self, bloco):
         
         output=[]
-        noise = np.random.normal(0, self.variancia, len(bloco))
+        noise = np.random.normal(0, math.sqrt(self.variancia), len(bloco))
 
         for i in range(0,len(bloco)):
             output.append(bloco[i]+noise[i])

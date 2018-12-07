@@ -1,9 +1,8 @@
 import Register
-import geraVetor
 
 class Codificador:
     def __init__(self,m,g1,g2,g3):
-        self.m = 2
+        self.m = m
         self.g1 = g1
         self.g2 = g2
         self.g3 = g3
@@ -15,68 +14,46 @@ class Codificador:
         self.register = Register.Register(m)
 
     def octal2poly(self, g):
-        a = []
-        unidades = g%10
-        g = g//10
-        dezenas = g%10  
-        centenas = g//10
+        for i in str(g):
+            if i >= '8' or i<'0':
+                print("O parametro nao esta na base octal: ",g)
+                return None
 
-        a = []
-        for i in range(3):
-            a.append(unidades%2)
-            unidades = unidades//2
-        a.reverse()
+        polinomio = "".join([format(int(c), '03b') for c in str(g)])
+        polinomio = max(self.m+1-len(polinomio),0)*'0'+polinomio
+        polinomio = polinomio[-(self.m+1):]
+        polinomio = [int(c) for c in polinomio]
+        return polinomio[:]
 
-        b = []
-        for i in range(3):
-            b.append(dezenas%2)
-            dezenas = dezenas//2
-        b.reverse()
 
-        c = []
-        for i in range(3):
-            c.append(centenas%2)
-            centenas = centenas//2
-        c.reverse()
-
-        d = []
-        d.extend(c)
-        d.extend(b)
-        d.extend(a)
-        
-        d = d[-(self.m+1):]
-        return d[:]
-
-    def codifica(self, bitInformacao): # codificador correto
-        v1 = bitInformacao
-        for i in range(self.m):
-            v1 += self.g1pol[i]*self.register.r[i]
-        v1 %= 2 
-
-        v2 = bitInformacao
-        for i in range(self.m):
-            v2 += self.g2pol[i]*self.register.r[i]
-        v2 %= 2 
-
-        v3 = bitInformacao
-        for i in range(self.m):
-            v3 += self.g3pol[i]*self.register.r[i]
-        v3 %= 2
+    def codifica(self, bitInformacao):
+        codigo = []
+        gpol = [self.g1pol, self.g2pol, self.g3pol]
+        for polinomio in gpol:
+            cd = bitInformacao*polinomio[0]
+            for i in range(self.m):
+                cd += polinomio[i+1]*self.register.r[i]
+            cd %= 2
+            codigo.append(cd)
 
         self.register.add(bitInformacao)
-        return [v1,v2,v3]
+        return codigo[:] 
 
     def resetCodificador(self):
         self.register.resetRegister()
+
+
+if __name__ == '__main__':
     
-    def codifica2(self, bitInformacao): # codificador teste
-        v1 = bitInformacao
-        
-        v2 = bitInformacao + self.register.r[0] + self.register.r[1] + self.register.r[1]
-        v2 %= 2
-
-        v3 = bitInformacao + self.register.r[0] + self.register.r[1] + self.register.r[0]
-        v3 %= 2
-
-        self.register.add((self.register.r[0]+self.register.r[1]+bitInformacao)%2)
-        return [v1,v2,v3] 
+    # teste
+    cod = Codificador(3, 13, 15, 17)
+    sequencia = [1,0,1,1,0,1,0,0,0]
+    codificado = []
+    for bit in sequencia:
+        c = cod.codifica(bit)
+        codificado.extend(c[:])
+    correto = [1,1,1,0,1,1,0,1,0,0,1,1,1,1,0,1,0,1,1,0,0,1,0,1,1,1,1]
+    if codificado == correto:
+        print("codificacao correta")
+    else:
+        print("DECODIFICACAO INCORRETA!!")
